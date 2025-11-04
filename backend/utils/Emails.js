@@ -22,8 +22,6 @@ transporter.verify((error, success) => {
 // Function to send email
 
 
-const SibApiV3Sdk = require("@getbrevo/brevo");
-
 exports.sendMail = async (receiverEmail, subject, body) => {
   try {
     // Create API instance
