@@ -21,13 +21,13 @@ transporter.verify((error, success) => {
 });
 
 // Function to send email
+
+
 exports.sendMail = async (receiverEmail, subject, body) => {
   try {
     const apiInstance = new Brevo.TransactionalEmailsApi();
-    apiInstance.setApiKey(
-      Brevo.TransactionalEmailsApiApiKeys.apiKey,
-      process.env.PASSWORD
-    );
+    const apiKey = process.env.PASSWORD; // using PASSWORD as Brevo API key
+    apiInstance.authentications['apiKey'].apiKey = apiKey;
 
     const sendSmtpEmail = {
       to: [{ email: receiverEmail }],
