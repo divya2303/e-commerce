@@ -1,15 +1,17 @@
 const nodemailer = require("nodemailer");
 
-const testTransport = nodemailer.createTransport({
+// Create transporter for Brevo SMTP
+const transporter = nodemailer.createTransport({
   host: "smtp-relay.brevo.com",
   port: 587,
   auth: {
-    user: process.env.BREVO_EMAIL,
-    pass: process.env.BREVO_KEY,
+    user: process.env.EMAIL,
+    pass: process.env.PASSWORD,
   },
 });
 
-testTransport.verify((error, success) => {
+// Optional: verify connection at startup
+transporter.verify((error, success) => {
   if (error) {
     console.error("❌ SMTP connection failed:", error);
   } else {
@@ -17,13 +19,17 @@ testTransport.verify((error, success) => {
   }
 });
 
-
-
-exports.sendMail = async(receiverEmail,subject,body) => {
+// Function to send email
+exports.sendMail = async (receiverEmail, subject, body) => {
+  try {
     await transporter.sendMail({
-    from: process.env.EMAIL,
-    to: receiverEmail,
-    subject: subject,
-    html: body
-  });
+      from: `"MERN AUTH" <${process.env.EMAIL}>`,
+      to: receiverEmail,
+      subject,
+      html: body,
+    });
+    console.log("✅ Email sent to:", receiverEmail);
+  } catch (error) {
+    console.error("❌ Failed to send email:", error);
+  }
 };
