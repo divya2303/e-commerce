@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const Brevo = require("@getbrevo/brevo");
 
 // Create transporter for Brevo SMTP
 const transporter = nodemailer.createTransport({
@@ -22,14 +23,22 @@ transporter.verify((error, success) => {
 // Function to send email
 exports.sendMail = async (receiverEmail, subject, body) => {
   try {
-    await transporter.sendMail({
-      from: `"MERN AUTH" <${process.env.EMAIL}>`,
-      to: receiverEmail,
-      subject,
-      html: body,
-    });
-    console.log("✅ Email sent to:", receiverEmail);
+    const apiInstance = new Brevo.TransactionalEmailsApi();
+    apiInstance.setApiKey(
+      Brevo.TransactionalEmailsApiApiKeys.apiKey,
+      process.env.PASSWORD
+    );
+
+    const sendSmtpEmail = {
+      to: [{ email: receiverEmail }],
+      sender: { email: process.env.EMAIL, name: "MERN AUTH SYSTEM" },
+      subject: subject,
+      htmlContent: body,
+    };
+
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
+    console.log("✅ Email sent successfully to:", receiverEmail);
   } catch (error) {
-    console.error("❌ Failed to send email:", error);
+    console.error("❌ Failed to send email:", error.response?.text || error);
   }
 };
