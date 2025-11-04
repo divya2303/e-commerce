@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const Brevo = require("@getbrevo/brevo");
+const Brevo = require("@getbrevo/brevo")
 
 // Create transporter for Brevo SMTP
 const transporter = nodemailer.createTransport({
