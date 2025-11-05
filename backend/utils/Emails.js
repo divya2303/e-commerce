@@ -1,49 +1,26 @@
-const nodemailer = require("nodemailer");
+// utils/Emails.js
 const SibApiV3Sdk = require("@getbrevo/brevo");
-// Create transporter for Brevo SMTP
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL,
-    pass: process.env.PASSWORD,
-  },
-});
 
-// Optional: verify connection at startup
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("❌ SMTP connection failed:", error);
-  } else {
-    console.log("✅ SMTP ready to send emails");
-  }
-});
+// ✅ Create instance
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
-// Function to send email
+// ✅ Set API key correctly
+const apiKey = process.env.PASSWORD; // make sure this env var exists
+apiInstance.authentications["apiKey"].apiKey = apiKey;
 
-
-exports.sendMail = async (receiverEmail, subject, body) => {
+// ✅ Send email function
+exports.sendMail = async (to, subject, text) => {
   try {
-    // Create API instance
-    const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-
-    // Assign your API key from environment variable (PASSWORD)
-    apiInstance.apiClient.authentications.apiKey.apiKey = process.env.PASSWORD;
-
-    // Define the email structure
     const sendSmtpEmail = {
-      sender: { email: process.env.EMAIL, name: "MERN AUTH SYSTEM" },
-      to: [{ email: receiverEmail }],
+      sender: { email: "divyaguptadg365@gmail.com.com", name: "Your App Name" },
+      to: [{ email: to }],
       subject: subject,
-      htmlContent: body,
+      textContent: text,
     };
 
-    // Send email
     await apiInstance.sendTransacEmail(sendSmtpEmail);
-    console.log("✅ Email sent successfully to:", receiverEmail);
+    console.log("✅ Email sent successfully");
   } catch (error) {
-    console.error("❌ Failed to send email:", error?.response?.text || error);
+    console.error("❌ Failed to send email:", error);
   }
 };
-
